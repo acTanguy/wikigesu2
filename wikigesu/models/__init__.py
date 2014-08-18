@@ -1,0 +1,2 @@
+
+from wikigesu.models import *

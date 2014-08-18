@@ -1,0 +1,34 @@
+
+{% if content.results.numFound > 0 %}
+    {% if content.results.numFound > 0 %}
+    <div class="list-group">
+    {% for result in content.results.results %}
+        {% if result.type == "wikigesu_recueil" %}
+            <a href="/edition/{{ result.recueil_id }}" class="list-group-item">
+                <span class="label label-primary pull-right">Recueil</span>
+                <h4>{{ result.titre }}</h4>
+                
+            </a>
+        {% elif result.type == "wikigesu_piece" %}
+            <a href="/edition/{{ result.recueil_id }}/{{ result.id }}" class="list-group-item">
+                <span class="label label-success pull-right">Piece</span>
+                <h4>{{ result.titre }}</h4>
+                
+            </a>
+
+        {% elif result.type == "wikigesu_texte" %}
+            <a href="/texte/{{ result.slug }}" class="list-group-item">
+                <span class="label label-warning pull-right">Texte</span>
+                <h4>{{ result.titre }}</h4>
+                
+            </a>
+        
+        {% endif %}
+    {% endfor %}
+
+    </div>
+    {% else %}
+    <h5>No Results found.</h5>
+    {% endif %}
+{% endif %}
+

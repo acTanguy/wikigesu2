@@ -1,0 +1,345 @@
+/* * html5doctor.com Reset Stylesheet v1.6.1 (http://html5doctor.com/html-5-reset-stylesheet/) * Richard Clark (http://richclarkdesign.com) * http://cssreset.com 
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre,abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, 
+samp,small, strong, sub, var, b, i,
+dl, dt, dd, ol,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,footer, header, hgroup, menu, nav, section, summary,time, mark, audio, video 
+{
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+	font-family: "Times New Roman";
+}
+
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section 
+{
+    display:block;
+}
+nav ul
+{
+    list-style:none;
+}
+blockquote, q 
+{
+    quotes:none;
+}
+blockquote:before, blockquote:after,q:before, q:after 
+{
+    content:'';
+    content:none;
+}
+a
+{
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+input, select 
+{
+    vertical-align:middle;
+}
+
+/* End of reset */
+html
+{
+	overflow-x: hidden;
+}
+
+body
+{
+	color: black;
+	height: auto;
+	position: relative;
+	width: 100%;
+	margin: auto;
+	overflow-x: hidden;
+}
+*/
+/*
+----------------------------------------------------------------------------------------------
+Menu et son contenu
+----------------------------------------------------------------------------------------------
+
+
+nav
+{
+	background: linear-gradient(to top, black, #212121);
+	background-color: black;
+	color: white;
+	min-height: 50px;
+	position: relative;
+	margin-bottom: 20px;
+	margin-top: 0px;
+	width: 100%;
+	vertical-align: middle;
+}
+
+nav ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+nav ul li
+{
+	display: inline-block;
+	position: relative;
+	padding: 0 0.5em;
+	margin-top: 5px;
+	height: 40px;
+	border-right: 1px solid grey;
+	vertical-align: middle;
+	text-align: center;
+	min-width: 80px;
+}
+
+.menu_droite
+{
+	float: right;
+	border-left: 1px solid grey;
+	border-right: none;
+}
+
+nav a
+{
+	color: white;
+	text-decoration : none;
+	display: block;
+	vertical-align: middle;
+	margin-top: 10px;
+}
+
+nav a:hover
+{
+	text-decoration: underline;
+}
+
+nav form
+{
+	margin-top: 6px;
+}
+
+
+---------------------------------------------------------------------------------------------
+Fin Menu
+---------------------------------------------------------------------------------------------
+*/
+
+.headering
+{
+	height: 150px;
+	background-image: url('imagesCss/new_logo_ricercar.jpg');
+	background-repeat: no-repeat;
+}
+
+#fond
+{
+	background-color: white;
+	width: 100%;
+	position: relative;
+}
+
+#sur_menu
+{
+	height: 80px;
+	width: 100%;
+	position: relative;
+	background-color: grey;
+	margin-bottom: 0px;
+}
+
+#infos_piece
+{
+	width: 15%;
+	position: relative;
+	display: block;
+	float: left;
+	padding: 10px;
+	margin-top: 0;
+}
+
+#infos_piece ul
+{
+	margin: 3px;
+}
+
+#partitions
+{
+	height: 100%;
+	padding: 10px;
+	border-right: 1px solid grey;
+	border-left: 1px solid grey;
+	position: relative;
+	display: table-cell;
+	float: left;
+}
+
+#partitions img
+{
+	width: 100%;
+}
+
+.navigation_partitions
+{
+	text-align: center;
+	width: 100%;
+	min-height: 20px;
+}
+
+#container-inner
+{
+	position: relative;
+	display: table;
+	transition-duration: 1s;
+}
+
+.bouton_montrer_cacher_droite
+{
+	background: linear-gradient(to right, black, transparent);
+	opacity: 0.2;
+	transition-duration: 0.5s;
+}
+
+.bouton_montrer_cacher_gauche
+{
+	background: linear-gradient(to left, black, transparent);
+	opacity: 0.2;
+	transition-duration: .5s;
+}
+
+.bouton_montrer_cacher_droite:hover, .bouton_montrer_cacher_gauche:hover
+{
+	opacity: 0.5;
+}
+
+#piece_commentaires
+{
+	width: 20%;
+	position: relative;
+	display: block;
+	float: right;
+	padding: 10px;
+	height: 20%;
+}
+
+#piece_commentaires_zone
+{
+	width: 100%;
+	margin-top: 5px;
+	
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
+	height: 75%;
+}
+
+.piece_commentaire_texte
+{
+	width: 95%;
+	min-height: 120px;
+	background-color: #999;
+	border-radius: 5px;
+	margin: 5px;
+	position: relative;
+	transition-duration: .5s;
+}
+
+.commentaire_invalide
+{
+	opacity: 0.7;
+}
+
+.piece_commentaire_texte table
+{
+	width: 100%;
+}
+
+.piece_commentaire_texte table th
+{
+	text-align: left;
+	padding-left: 15px;
+}
+
+.bouton_validation_message
+{
+	cursor: pointer;
+	float: right;
+}
+
+.date_message
+{
+	font-size: 80%;
+}
+
+.hidden
+{
+	display: none;
+}
+
+footer
+{
+	position: relative;
+	min-height: 120px;
+	width: 100%;
+	float: left;
+	background-color: transparent;
+	margin-top: 20px;
+}
+
+#infos_piece_fleche, #piece_commentaires_fleche
+{
+	display: table-cell;
+	position: relative;
+	width: 1.5%;
+	min-width: 15px;
+	vertical-align: middle;
+}
+
+td li
+{
+	list-style-type: none;
+	margin: 5px;
+}
+
+.table_recueils
+{
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table_recueils th
+{
+	background-color: #ABABAB;
+}
+.table_recueils td
+{
+	border-bottom: 1px solid grey;
+}
+
+.table_recueils ul
+{
+	margin: 0px;
+}
+
+dt
+{
+	font-weight: bold;
+}
+
+#corps
+{
+	padding-left: 15px;
+	padding-right: 15px;
+}

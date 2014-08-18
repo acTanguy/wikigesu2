@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div>
+   <h1>{{ recueil.titre }}</h1>
+   <div>
+        <dl>
+            <dt></dt>
+            <dd>{{ recueil.titre_traduit }}</dd>
+            <dt>
+                {%for reference in recueil.catalogue_id.all %}
+		<ul>
+                    <li>{{ reference.cote }}</li>
+                </ul>
+                {% endfor %}
+            </dt>
+            <dd></dd>
+	    <dt>Editeur</dt>
+	    <dd>{% for editeurs in recueil.editeur.all %}
+		{{ editeurs.nom_complet }}
+	    	{% endfor %}
+	    </dd>
+	    <dt>Edité à</dt>
+	    <dd>{% for villes in recueil.ville_edition.all %}
+                {{ villes.nom_lieu }}
+            	{% endfor %}
+            </dd>
+	    <dt>Edité en</dt>
+	    <dd>{{ recueil.datation }}</dd>
+	    <dt>Support :</dt>
+	    <dd>{{ recueil.support }}
+	    </dd>
+	</dl>
+    </div> 
+</div>
+
+
+<div>
+    <h1>Exemplaires du recueil</h1>
+    
+	<ul>{% for exemplaire in exemplaires %}
+	    <li>{{ exemplaire.cote_exemplaire }}</li>
+	{% endfor %}</ul>
+
+	<h1>Pièces du recueil</h1>
+	<ul>
+	{% for piece in pieces|dictsort:'place_dans_recueil' %}
+		<li><a href="{% url 'piece' recueil.recueil_id piece.place_dans_recueil %}">{{ piece.titre }}</a></li>
+	{% endfor %}
+	</ul>
+    
+</div>
+{% endblock %}

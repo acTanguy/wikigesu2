@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block link %}
+       
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <form role="form" id="search-form" action="/search" method="get">
+            <div class="form-group">
+                <input class="form-control" type="text" name="q" id="search-input" value="{{ request.GET.q }}"/>
+            </div>
+            
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>
+                            
+                            <select size="1" style="width=100%;" id="list">
+                            
+                                <option></option>
+                                <option value="title">Title</option>
+                                <option value="Tex">Text</option>
+                                <option value="Tit">Title/Text</option>
+                                <option value="Perf">Performer</option>
+                                <option>Editor</option>
+                                <option>Compositor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Source</option>
+                                <option>Localisation</option>
+                                <option>Comment</option>
+
+
+                                
+                            
+                            </select>
+                            
+                        </td>
+                        
+                        <td>
+                            <input class="form-control" type="text" id="inputable" name="" value=""/>
+                        </td>
+                    </tr>
+                    
+
+
+
+<script>
+                        
+  
+  
+list.addEventListener('change', function() {
+        var input = document.getElementById('inputable');
+        var list = document.getElementById('list');
+        var listValue = list.value;
+   // On affiche le contenu de l'élément <option> ciblé par la propriété selectedIndex
+      input.name = listValue;
+
+      
+
+  }, true);
+
+</script>
+
+
+
+
+
+
+
+
+                    <tr>
+                        <td>
+                            
+                            <select size="1" style="width=100%;" name="">
+                            
+                                <option></option>
+                                <option>Title</option>
+                                <option>Text</option>
+                                <option>Title/Text</option>
+                                <option>Performer</option>
+                                <option>Editor</option>
+                                <option>Compositor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Source</option>
+                                <option>Localisation</option>
+                                <option>Comment</option>
+                            
+                            </select>
+                            
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" name="q" id="search-input" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                            <select size="1" style="width=100%;" name="">
+                            
+                                <option></option>
+                                <option>Title</option>
+                                <option>Text</option>
+                                <option>Title/Text</option>
+                                <option>Performer</option>
+                                <option>Editor</option>
+                                <option>Compositor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Source</option>
+                                <option>Localisation</option>
+                                <option>Comment</option>
+                            
+                            </select>
+                            
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" name="q" id="search-input" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                            <select size="1" style="width=100%;" name="">
+                            
+                                <option></option>
+                                <option>Title</option>
+                                <option>Text</option>
+                                <option>Title/Text</option>
+                                <option>Performer</option>
+                                <option>Editor</option>
+                                <option>Compositor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Source</option>
+                                <option>Localisation</option>
+                                <option>Comment</option>
+                            
+                            </select>
+                            
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" name="q" id="search-input" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                            <select size="1" style="width=100%;" name="">
+                            
+                                <option></option>
+                                <option>Title</option>
+                                <option>Text</option>
+                                <option>Title/Text</option>
+                                <option>Performer</option>
+                                <option>Editor</option>
+                                <option>Compositor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Source</option>
+                                <option>Localisation</option>
+                                <option>Comment</option>
+                            
+                            </select>
+                            
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" name="q" id="search-input" value=""/>
+                        </td>
+                    </tr>
+
+                        
+
+                        
+                </tbody>
+            </table>
+
+            <!--
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="type" value="wikigesu_recueil"> Dans les Recueils
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="type" value="wikigesu_piece"> Dans les Pièces
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="type" value="wikigesu_texte"> Dans les Textes
+                </label>
+            </div>
+       
+
+
+
+	 <div class="checkbox">
+          <label>
+            <input type="checkbox" > Par recueil
+          
+
+                <select size="1" name="recueil_id" style="width=100%;">
+                    <option value="CG01">Premier Livre de Madrigaux</option>
+                    <option value="CG02">Second Livre de Madrigaux</option>
+                    <option value="CG03">Troisième Livre de Madrigaux</option>
+                    <option value="CG04">Quatrième Livre de Madrigaux</option>
+                    <option value="CG05">Cinquième Livre de Madrigaux</option>
+                    <option value="CG06">Sixième Livre de Madrigaux</option>
+                    <option value="CG09">Sacræ cantiones à 5 voix</option>
+                    <option value="CG10">Sacræ cantiones à 6/7</option>
+                    <option value="CG11">Responsoria</option>
+                </select>
+            
+        </label>
+        </div>
+        -->
+	
+        
+        <button type="submit" class="btn">Rechercher</button>
+        </form>
+
+        {% if content.results %}
+            <h3>Results</h3> 
+            {% include "search/search_results.html" %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

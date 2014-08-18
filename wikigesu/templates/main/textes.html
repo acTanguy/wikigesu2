@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load bootstrap_pagination %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+        <div class="show-heading row-fluid">
+            <hgroup class="show-title page-title span12">
+                <h1>Liste des textes</h1>
+            </hgroup>
+                <table class="table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+			<th>Recueil</th>
+                        
+                    </tr>
+
+                    {% for texte in textes %}
+                    <tr>
+                        <td><a href="{% url 'texte' texte.slug %}">{{ texte.titre }}</a></td>
+                        <td>{{ texte.auteur }}</td>
+                        <td>{{ texte.recueil }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% bootstrap_paginate textes range=10 %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

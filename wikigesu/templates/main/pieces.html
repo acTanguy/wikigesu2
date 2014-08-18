@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load bootstrap_pagination %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+        <div class="show-heading row-fluid">
+            <hgroup class="show-title page-title span12">
+                <h1>Liste des pieces</h1>
+            </hgroup>
+                <table class="table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Recueil</th>
+                        <th>Position dans le recueil</th>
+                    </tr>
+
+                    {% for piece in pieces %}
+                    <tr>
+                        <td><a href="{% url 'piece' piece.recueil_id.recueil_id piece.place_dans_recueil %}">{{ piece.titre }}</a></td>
+                        <td><a href="/edition/{{ piece.recueil_id.recueil_id }}">{{ piece.recueil_id }}</a></td>
+                        <td>{{piece.place_dans_recueil}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% bootstrap_paginate pieces range=10 %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

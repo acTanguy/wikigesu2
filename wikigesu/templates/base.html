@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	{% load staticfiles %}
+		<title>Wikigesu</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/reset.css"/>
+        	<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css"/>
+        	<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css.map"/>
+	        <link rel="stylesheet" href="{{ STATIC_URL }}css/styles.css"/>
+        	<script src="{{ STATIC_URL }}js/jquery.js"></script>
+		<link rel="stylesheet" media="screen" type="text/css" title="Design" href="{% static 'design.css' %}" />
+		<link rel="stylesheet" media="screen" type="text/css" href="{% static 'jquery-ui/css/smoothness/jquery-ui-1.10.4.custom.min.css' %}"/>
+		<script type='text/javascript' src="{% static 'jquery.js' %}"></script>
+		<script type='text/javascript' src="{% static 'jquery-ui/js/jquery-ui-1.10.4.custom.min.js' %}"></script>
+
+		<script src:"//code.jquery.com/jquery.js"></script>
+        	<script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+        	<script src="{{ STATIC_URL }}js/slide.js"></script>
+	</head>
+	<body>
+		<div class="page-header">
+    <div class="row">
+      <div class="col-md-6">
+  			<img src="{{ STATIC_URL }}imagesCss/RICERCAR_NOIR.png" class="img-responsive" alt="Responsive image">
+      </div>
+      <div class="col-md-6">
+        <div class"row">
+          <div class="col-md-12 text-right">
+            <div class="btn-group">
+              {% if user.is_authenticated %}
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-user"></span> {{ user.username }} <span class="caret"></span>
+                </button>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><a href="">My Account</a></li>
+                    <li><a href="/logout/">Logout</a></li>
+                  </ul>
+              {% else %}
+              <a href="/login/">
+                <button type="button" class="btn btn-default btn-large">
+                  <span class="glyphicon glyphicon-user"></span> Login
+                </button>
+               </a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-md-12 text-right" style="margin-top:10px;">
+          
+          <a href="http://www.cnrs.fr/" >
+            <img src="{{ STATIC_URL }}img/CNRS.gif" height="40px" width="40px" style="margin-right:10px;"/>
+          </a>
+          <a href="http://www.univ-tours.fr/" >
+            <img src="{{ STATIC_URL }}img/ufr.gif" height="40px" width="50px" style="margin-right:10px;"/>
+          </a>
+          <a href="http://www.culturecommunication.gouv.fr/" >
+            <img src="{{ STATIC_URL }}img/ministere_culture.jpg" height="40px" width="30px" style="margin-right:10px;"/>
+          </a>
+          <a href="http://www.regioncentre.fr/" >
+            <img src="{{ STATIC_URL }}img/RC.gif" height="40px" width="70px" style="margin-right:10px;"/>
+          </a>
+          <a href="http://msh.univ-tours.fr/" >
+            <img src="{{ STATIC_URL }}img/msh.png" height="40px" width="80px" style="margin-right:10px;"/>
+          </a>
+          <a href="http://www.europe-centre.eu/fr/1/Accueil.html" >
+            <img src="{{ STATIC_URL }}img/Feder.jpg" height="40px" width="40px" />
+          </a>
+          </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+      <div id="fond">
+        
+      
+			<nav class="navbar navbar-default" role="navigation">
+			  <div class="container-fluid">
+    				<!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" a href="{% url 'accueil' %}">Accueil</a>
+          </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Édition <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'recueils' %}">Recueils</a></li>
+                  <li class="divider"></li>
+                  <li><a href="{% url 'pieces' %}">Pieces</a></li>
+                  <li class="divider"></li>
+                  <li><a href="{% url 'textes' %}">Textes</a></li>
+                 </ul>
+              </li>
+              <li><a href="{% url 'equipe' %}">Équipe</a></li>
+              </ul>
+            <div class="navbar-right">
+            <ul class="nav navbar-nav">
+              <li>
+                  <form class="navbar-form" role="search" method="GET" action="{% url 'search-view' %}">
+                      <div class="form-group">
+                        <input type="text" class="form-control" name="q" placeholder="recherche" value="{{ request.GET.q }}">
+                      </div>
+                      <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search"></span>
+                      </button>
+                  </form>
+              </li>
+              <li><a href="{% url 'search-view' %}">Recherche avancée</a></li>
+            </ul>
+            </div>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>	
+      </div>
+      </div>
+			<div id="corps">
+{% block content %}
+
+{% endblock %}
+			</div>
+			<footer>
+			</footer>
+		</div>
+	</body>
+	<script> $(function() {$(".search").button();
+	$(".search").button("option", "icons", {primary: "ui-icon-search"});
+	});
+	</script>
+	{% block scripts %}{% endblock %}
+</html>

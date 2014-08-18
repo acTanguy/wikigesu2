@@ -1,0 +1,572 @@
+﻿{% extends 'base.html' %}
+{% load piece_extra %}
+{% load staticfiles %}
+{% block content %}
+
+	<div class="row">
+
+<!-- header de page piece -->
+		<div class="col-md-1"></div>
+		<div class="col-md-4">
+			<h1>{{ piece.titre }} </h1>
+		</div>
+		<div class="col-md-4"></div>
+		<div class="well col-md-2">
+	        <a href=""><img src="{{ STATIC_URL}}/img/pdf.png" height="40px"></a>
+	        <a href=""><img src="{{ STATIC_URL}}/img/mei.png" height="40px"></a>
+	        <a href=""><img src="{{ STATIC_URL}}/img/itunes.png" height="40px"></a>
+	    </div>
+	    <div class="col-md-1"></div>
+	</div>
+
+
+	<section id="infos_piece">
+		<div id="infos_piece_texte">
+			<p><b>Title</b> : {{ piece.titre }}</p>
+			<p><b>Place dans le recueil </b>: {{ piece.place_dans_recueil }}</p>
+			<p><b>Compositeur </b>:<ul>{% for c in piece.compositeur.all %}
+	<li>{{ c }}</li>
+			{% endfor %}
+			</ul></p>
+			<p><b>Poete-Parolier</b> : <ul>{% for p in piece.poete.all %}
+	<li>{{ c }}</li>
+			{% endfor %}
+			<p><b>Nombre de voix</b> : {{ piece.nombre_de_voix }}</p>
+			<p><b>Style musical</b> : {{ piece.genre_musical_normalise }}</p>
+			<p><b>Genre musical</b> : {{ piece.genre_musical_detaille }}</p>
+			{% if piece.pdf_link %}
+				<p><b>Pdf : </b><a href="{{ piece.pdf_link }}">Link</a></p>
+			{% endif %}
+			{% if piece.mei_link %}
+				<p><b>Mei : </b><a href="{{ piece.mei_link }}">Link</a></p>
+			{% endif %}
+			{% if mp3_link %}
+				<p><b>Mp3 : </b><a href="{{ piece.mp3_link }}">Link</a></p>
+			{% endif %}
+			<p><b>Remarks</b> : {{ piece.remarques }}</p>
+		</div>
+	</section>
+	<section id="piece_commentaires">
+		<button id="buttonCom" class="btn btn-default" onclick="triggerCommentaire()" value="Send a message">Send a message</button>
+		<form id="ajoutCom" method="POST" enctype="multipart/form-data" action="{% url 'traitements:ajoutCommentaire' %}">{% csrf_token %}
+			<select id="commentaire_voice" name="voice" style="width: 49%;" required>
+				<option value="">Voice</option>
+				<option value="altus">Altus</option>
+				<option value="bassus">Bassus</option>
+			</select>
+			<input id="commentaire_mesure" name="measure" type="number" maxlength="3" pattern="(\d)(\d)(\d)" placeholder="Measure" style="width: 49%;" required/><br/>
+			<textarea id="commentaire_texte" name="message" cols="30" rows="5" style="resize: none; width: 100%;" placeholder="Message"></textarea>
+			{%  if not request.user.is_authenticated %}
+				<input type="mail" name="mail" placeholder="E-mail address" required style="width: 100%;"/><br/>
+			{% else %}
+				<input type="hidden" name="mail" value=""/>
+			{% endif %}
+			<label for="file">Join a file : </label><input type="file" id="file" name="file"/>
+			<input type="hidden" name="piece" value="{{ piece.id }}"/>
+			<input type="submit" value="Send"/>
+		</form>
+		<div id="piece_commentaires_zone">
+		{% for com in commentaires %}
+			<div id="commentaire{{ com.id }}" class="piece_commentaire_texte {% if not com.validee %}commentaire_invalide{% endif %}">
+				<table>
+					<thead>
+						<th>
+							{% if com.posteur %}
+								{{ com.posteur.personne.nom_bref }}
+							{% else %}
+								Internaute
+							{% endif %}
+							 <span class="date_message">({{ com.timestamp|date:"M d, Y" }})</span>
+						</th>
+						{% if perms.wikigesu.valider_message %}
+							{% if not com.validee %}
+								<form class="valideCom" method="POST" action="{% url 'traitements:valideCommentaire'%}">{% csrf_token %}
+									<input type="hidden" name="id" value="{{ com.id }}"/>
+									<input id="valide{{ com.id }}" type="image" src="{% static 'imagesCss/valider.gif' %}" class="bouton_validation_message" title="Validate" alt="V" value="submit"/>
+								</form>
+							{% endif %}
+								<form class="archiveCom" method="POST" action="{% url 'traitements:archiveCommentaire' %}">{% csrf_token %}
+									<input type="hidden" name="id" value="{{ com.id }}"/>
+									<input id="arch{{ com.id }}" type="image" src="{% static 'imagesCss/archive.png' %}" class="bouton_validation_message" title="Archive" alt="A" valute="submit"/>
+								</form>
+								
+								<form class="supprCom" method="POST" action="{% url 'traitements:supprimerCommentaire' %}">{% csrf_token %}
+									<input type="hidden" name="id" value="{{ com.id }}"/>
+									<input id="suppr{{ com.id }}" type="image" src="{% static 'imagesCss/refuser.png' %}" class="bouton_validation_message" title="Delete" alt="X" value="submit"/>
+								</form>
+						{% endif %}
+					</thead>
+					<tr>
+						<td {% if perms.wikigesu.valider_message %}colspan="2"{% endif %}>{{ com.message }}</td>
+					</tr>
+				</table>
+			</div>
+		{% endfor %}
+		
+		</div>
+	</section>
+	
+			<div id="container-inner">
+	<div id="infos_piece_fleche" class="bouton_montrer_cacher_gauche" onClick="changeAffichage('infos_piece', 'gauche')"></div>
+	<section id="partitions">
+	<div id="zonePartitions">{% for partition in piece.fichiers_joints.all %}<img id="partition{{ forloop.counter }}" src="/{{ partition.attachment.url }}" width="500%" />{% endfor %}</div>
+	<table class="navigation_partitions">
+		<tr>
+			<td><button id="boutonPremiere" class="btn btn-default" onClick=""><<</button></td>
+			<td><button id="boutonAvant" class="btn btn-default" onClick=""><</button></td>
+			<td>
+				<span id="pageActuelle" onClick="getFormPage()">1</span>
+				<form id="choixPage">
+					<input id="pageCherchee" class="form-control" type="number" size="3" maxlength="1" value="1"/>
+				</form>
+				<input id="nbPages" type="hidden" value="{{ piece.fichiers_joints.all|length }}"/>
+				<input id="noPageActuelle" type="hidden" value="1"/>
+			</td>
+			<td><button id="boutonApres" class="btn btn-default" onClick="change(1, 2, {{ piece.fichiers_joints.all|length }})">></button></td>
+			<td><button id="boutonDerniere" class="btn btn-default" onClick="change(1, {{ piece.fichiers_joints.all|length }}, {{ piece.fichiers_joints.all|length }})">>></button></td>
+		</tr>
+	</table>
+		</section>
+	<div id="piece_commentaires_fleche" class="bouton_montrer_cacher_droite" onClick="changeAffichage('piece_commentaires', 'droite')"></div>
+	</div>
+			
+{% endblock %}
+
+{% block scripts %}
+	<script type="text/javascript" src="{% static 'scripts.js' %}"></script>
+	<script>
+		
+		$('#commentaire_mesure').keyup(function() {$('#commentaire_mesure').val(this.value.match(/[0-9]*/));});
+		
+		/*
+		Initialisation de la page:
+			- on cache toutes les partitions qui ne sont pas la première
+			- on attribue aux boutons leur comportement selon le nombre de partitions
+			- on change le comportement du formulaire qui sert à choisir directement le numéro de la page à visualiser
+			- on change le comportement du champ d'entrée du formulaire quand on le quitte
+			- on change le comportement des différents formulaires nécessaires à la gestion des messages
+		*/
+		$(function()
+			{
+				$("#ajoutCom").hide();
+				nb = $('#nbPages').val();
+				for(var i = 2; i <= nb ; i++)
+				{
+					$('#partition' + i).hide();
+				}
+				var pageInitiale = $('#partition1');
+				pageInitiale.show();
+
+				$('#boutonPremiere').attr("disabled", "disabled"); //button("disable");
+				$('#boutonAvant').attr("disabled", "disabled"); //button("disable");
+				$('#pageCherchee').hide();
+
+				// Si on n'a qu'une seule partition, alors on n'a pas besoin de naviguer, on désactive les boutons
+				if(nb < 2)
+				{
+					$('#boutonApres').attr("disabled" ,"disabled");
+					$('#boutonDerniere').button("disabled", "disabled");
+					$('#boutonApres').attr("onClick", "");
+					$('#boutonDerniere').attr("onClick", "");
+				}
+				
+				/*
+					Le formulaire, une fois validé, regarde les valeurs du nombre de partitions, de la page actuellement visualisée et de la page demandée pour agir en conséquence
+				*/
+				$('#choixPage').submit(function() {
+					var max = $('#nbPages').val();
+					var actuel = $('#noPageActuelle').val();
+					var nouveau = $('#pageCherchee').val();
+					if(nouveau.match(/[0-9]*/) != "") // Si ce qui est entré est un nombre, alors ceci retourne quelque chose, alors on peut considérer un changement de page
+					{
+						if(nouveau > max) // Pour ne pas dépasser la limite de pages
+						{
+							nouveau = max;
+						}
+						if(nouveau == actuel)
+						{
+							return false;
+						}
+						
+						// On rétablit l'affichage du texte de la page actuelle et on dissimule le champ d'entrée pour un usage ultérieur
+						$('#pageActuelle').show();
+						$('#pageCherchee').hide();
+						change(actuel, nouveau, max);
+						return false; // On annule la validation du formulaire pour ne pas charger de page
+					}
+					else // Si la recherche ne correspondait pas à un nombre, on réinitialise le champ à sa valeur d'origine
+					{
+						$('#pageCherchee').val(actuel);
+						return false;
+					}
+					
+				});
+				
+				// Lors de la perte de focus du champ d'entrée de la page cherchée, on valide le formulaire, on affiche le texte correspondant et on dissimule le champ d'entrée
+				$('#pageCherchee').blur(function() {
+					$('#choixPage').submit();
+					$('#pageActuelle').show();
+					$(this).hide();
+				});
+				
+				
+				/*
+					Validation des messages :
+						Un message à valider comporte un formulaire qui comporte la classe "valideCom". En validant ce formulaire, on demande au serveur d'enregistrer le changement.
+						Si la réponse est positive (la réponse doit être l'id du message validé), alors on notifie le changement en rétablissant l'opacité de la zone du message.
+				*/
+				$('form[class="valideCom"]').submit( function() {
+					var url = $(this).attr('action');
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: $(this).serializeArray(),
+						success: function(data) {
+							if(data != "-1")
+							{
+								$("#commentaire" + data).css("opacity", 1);
+								$("#valide" + data).fadeOut();
+							}
+						}
+					});
+					return false;
+				});
+				
+				
+				/*
+					Suppression des messages :
+						Pour supprimer un message, on demande via un formulaire de classe "supprCom". Celui-ci comporte l'id du message à supprimer.
+						Si la réponse est positive (la réponse doit être l'id du message supprimé), alors on notifie le changement en cachant la zone du message.
+				*/
+				$('form[class="supprCom"]').submit( function() {
+					var url = $(this).attr('action');
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: $(this).serializeArray(),
+						success: function(data) {
+							if(data != -1)
+							{
+								$("#commentaire" + data).fadeOut();
+							}
+						}
+					});
+					return false;
+				});
+				
+				$('form[class="archiveCom"]').submit( function() {
+					var url = $(this).attr('action');
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: $(this).serializeArray(),
+						success: function(data) {
+							if(data != -1)
+							{
+								$("#commentaire" + data).fadeOut();
+							}
+						}
+					});
+					return false;
+				});
+				
+				/*
+					Ajout de messages :
+						Pour ajouter un message, on demande via un formulaire d'id "ajoutCom", qui comporte le numéro de la mesure et le message.
+						En cas d'insertion réussie, on crée une zone pour le message, qui comporte le nom du posteur, les boutons et formulaires pour valider ou supprimer
+						si l'utilisateur en a les droits, puis le message.
+				*/
+				$("#ajoutCom").submit( function() {
+					if($("#commentaire_texte").val() == "")
+						return false;
+					var url = $(this).attr('action');
+					var formData = new FormData($(this)[0]);
+					$.ajax({
+						type: "POST",
+						url: url,
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function(data) {
+							var zone = $("#piece_commentaires_zone");
+							var divCom = $("<div id='commentaire" + data + "' class='piece_commentaire_texte commentaire_invalide'></div>");
+							var table = $('<table></table>');
+							var tete = $('<thead></thead>');
+							var pseudo = $('<th></th>');
+							pseudo.appendTo(tete);
+							
+							{% if user.is_authenticated %} // S'il est authentifié, alors il possède un compte, qui possède un nom bref.
+								pseudo.text("{{ user.utilisateurprofile.personne.nom_bref }}");
+							{% else %}
+								pseudo.text("Internaute"); // Sans quoi, il est considéré comme un internaute.
+							{% endif %}
+							
+							{% if perms.wikigesu.valider_message %} // Si l'utilisateur possède le droit de valider les messages, on lui offre la possibilité
+							
+								var validations = $('<th></th>');
+								validations.appendTo(tete);
+								
+								var formValide = $('<form class="valideCom" method="POST"></form>');
+								formValide.attr('action', "{% url 'traitements:valideCommentaire' %}");
+								formValide.html("{% csrf_token %}");
+								var valide = $('<input id="valide' + data + '" type="image" class="bouton_validation_message" title="Valider" alt="V" value="submit"/>');
+								valide.attr('src', '{% static "imagesCss/valider.gif" %}');
+								var hiddenValide = $('<input type="hidden" name="id" value="' + data + '"/>');
+								valide.appendTo(formValide);
+								hiddenValide.appendTo(formValide);
+								formValide.appendTo(validations);
+								
+								var formArchive = $('<form class="archiveCom" method="POST"></form>');
+								formArchive.attr('action', "{% url 'traitements:archiveCommentaire' %}");
+								formArchive.html("{% csrf_token %}");
+								var archive = $('<input id="archive' + data + '" type="image" class="bouton_validation_message" title="Valider" alt="A" value="submit"/>');
+								archive.attr('src', '{% static "imagesCss/archive.png" %}');
+								var hiddenArchive = $('<input type="hidden" name="id" value="' + data + '"/>');
+								archive.appendTo(formArchive);
+								hiddenArchive.appendTo(formArchive);
+								formArchive.appendTo(validations);
+								
+								var formInvalide = $('<form class="supprCom" method="POST"></form>');
+								formInvalide.attr('action', "{% url 'traitements:supprimerCommentaire' %}");
+								formInvalide.html("{% csrf_token %}");
+								var invalide = $('<input id="suppr' + data + '" type="image" class="bouton_validation_message" title="Supprimer" alt="X" value="submit"/>');
+								invalide.attr('src', '{% static "imagesCss/refuser.png" %}');
+								var hiddenInvalide = $('<input type="hidden" name="id" value="' + data + '"/>');
+								invalide.appendTo(formInvalide);
+								hiddenInvalide.appendTo(formInvalide);
+								formInvalide.appendTo(validations);
+								
+								// On change le comportement des formulaires, comme pour ceux qui ont été généré à la création de la page.
+								formValide.submit( function() {
+									var url = $(this).attr('action');
+									$.ajax({
+										type: "POST",
+										url: url,
+										data: $(this).serializeArray(),
+										success: function(data2) {
+											if(data2 != "-1")
+											{
+												$("#commentaire" + data2).css("opacity", 1);
+												$("#valide" + data2).fadeOut();
+											}
+										}
+									});
+									return false;
+								});
+								
+								formArchive.submit( function() {
+									var url = $(this).attr('action');
+									$.ajax({
+										type: "POST",
+										url: url,
+										data: $(this).serializeArray(),
+										success: function(data2) {
+											if(data2 != "-1")
+											{
+												$("#commentaire" + data2).fadeOut();
+											}
+										}
+									});
+									return false;
+								});
+								
+								formInvalide.submit( function() {
+									var url = $(this).attr('action');
+									$.ajax({
+										type: "POST",
+										url: url,
+										data: $(this).serializeArray(),
+										success: function(data2) {
+											if(data2 != -1)
+											{
+												$("#commentaire" + data2).fadeOut();
+											}
+										}
+									});
+									return false;
+								});
+								
+							{% endif %}
+							
+							var tr = $('<tr></tr>');
+							var td = $('<td></td>');
+							td.text($('#commentaire_texte').val());
+							{% if perms.wikigesu.valider_message %}
+								td.attr('colspan', '2');
+							{% endif %}
+
+							
+							td.appendTo(tr);
+							tete.appendTo(table);
+							tr.appendTo(table);
+							table.appendTo(divCom);
+							divCom.prependTo(zone);
+							divCom.fadeOut();
+							divCom.fadeIn();
+							$('#commentaire_mesure').val("");
+							$('#commentaire_texte').val("");
+						}
+					});
+					return false;
+				});
+				
+				
+			}
+		);
+		
+		// Lorsque l'on veut afficher le formulaire de choix de la page à afficher, on cache son texte et on montre le champ.
+		function getFormPage()
+		{
+			$('#pageActuelle').hide();
+			$('#pageCherchee').show().focusin();
+		}
+		
+		
+		/*
+			Lorsque l'on veut changer la page à afficher:
+				On connait le numéro de la page actuelle, celle qui est recherchée et le nombre maximal de pages pour la pièce. On fait disparaître la page actuelle, puis apparaître
+				la nouvelle dès que possible, puis on met le numéro de la page à jour. On actualise la valeur des champs cachés puis on regarde, selon la nouvelle page, quels
+				boutons sont à activer ou désactiver, et on met à jour leur fonction.
+		*/
+		function change(actuel, nouveau, max)
+		{
+			$('#partition' + actuel).hide("fade", {complete: function() {$('#partition' + nouveau).show("fade");}});
+			$('#pageActuelle').hide("fade", {complete: function(){$('#pageActuelle').text(nouveau); $('#pageActuelle').show("fade");}});
+			$('#noPageActuelle').val(nouveau);
+			$('#pageCherchee').val(nouveau);
+			var bPrem = $('#boutonPremiere');
+			var bAv = $('#boutonAvant');
+			var bAp = $('#boutonApres');
+			var bDer = $('#boutonDerniere');
+			if(nouveau == 1)
+			{
+				bPrem.attr("disabled", "disabled"); //button("disable");
+				bAv.attr("disabled", "disabled"); //.button("disable");
+			}
+			else
+			{
+				bPrem.attr("onClick", "change(" + nouveau + ", 1, " + max + ")");
+				bPrem.removeAttr("disabled"); // button("enable");
+				bAv.attr("onClick", "change(" + nouveau + ", " + (nouveau - 1) + ", " + max + ")");
+				bAv.removeAttr("disabled"); //button("enable");
+			}
+			if(nouveau == max)
+			{
+				bAp.attr("disabled", "disabled"); //.button("disable");
+				bDer.attr("disabled", "disabled"); //.button("disable");
+			}
+			else
+			{
+				bAp.removeAttr("disabled"); //button("enable");
+				bAp.attr("onClick", "change(" + nouveau + ", " + (nouveau + 1) + ", " + max + ")");
+				bDer.removeAttr("disabled"); //button("enable");
+				bDer.attr("onClick", "change(" + nouveau + ", " + max + ", " + max + ")");
+			}
+		}
+		
+		function prepare(i, url)
+		{
+			var page = $('<img id="partition' + i + '" src="' + url + '" title="Page ' + i + '" alt="Page ' + i + '"/>');
+			var zone = $('#zonePartitions');
+			page.appendTo(zone);
+			if(i != "1")
+				page.hide();
+		}
+		
+		// Pour afficher ou cacher les parties sur les côtés des partitions, avec le sens d'apparition ou de disparaition, selon.
+		function changeAffichage(nom, position)
+		{
+			var node = $('#' + nom);
+			if(node.css("display") == "none")
+			{
+				if(position == "gauche")
+				{
+					node.show("drop", {direction: 'left'});
+					$('#' + nom + '_fleche').text();
+				}
+				else
+				{
+					node.show("drop", {direction: 'rigth'});
+					$('#' + nom + '_fleche').text();
+				}
+						}
+						else
+						{
+				if(position == "gauche")
+				{
+					node.hide("drop", {direction: 'left'});
+					$('#' + nom + '_fleche').text();
+				}
+				else
+				{
+					node.hide("drop", {direction: 'rigth'});
+					$('#' + nom + '_fleche').text();
+				}
+			}
+		}
+		
+		function supprCommentaire(id)
+		{
+			var http = getXMLHttpRequest();
+			var data = "id=" + id;
+			http.open("POST", "{% url 'traitements:supprimerCommentaire' %}", true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.setRequestHeader("Content-length", data.length);
+			http.onreadystatechange = function() {
+				if(http.readyState == 4)
+				{
+					var com = $("#commentaire" + id);
+					com.fadeOut();
+				}
+			}
+			http.send(data);
+		}
+		
+		function validerCommentaire(id)
+		{
+			var http = getXMLHttpRequest();
+			var data = "id=" + id;
+			http.open("POST", "{% url 'traitements:valideCommentaire'%}", true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.setRequestHeader("Content-length", data.length);
+			http.onreadystatechange = function() {
+				if(http.readyState == 4)
+				{
+					var com = $("#commentaire" + id);
+					com.css("opacity", 1);
+				}
+			}
+			http.send(data);
+		}
+		
+		
+		
+		function ajouteCommentaire()
+		{
+			var http = getXMLHttpRequest();
+			var message = document.getElementById("commentaire_mesure").value;
+			var mesure = document.getElementById("commentaire_texte").value;
+			var data = "message=" + encodeURIComponent(unescape(message)) + "&piece=" + encodeURIComponent(unescape({{ piece.id }})) + "&mesure=" + encodeURIComponent(unescape(mesure));
+			alert(data);
+			
+			http.open("POST", "{% url 'traitements:ajoutCommentaire'%}", true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.setRequestHeader("Content-length", data.length);
+			http.onreadystatechange = function() {
+				if(http.readyState == 4)
+				{
+					alert(http.responseText);
+				}
+			}
+			
+			http.send(data);
+		}
+		
+		function triggerCommentaire()
+		{
+			$("#buttonCom").hide();
+			$("#ajoutCom").fadeIn();
+		}
+		
+	</script> 
+{% endblock %}
